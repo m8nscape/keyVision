@@ -1,0 +1,62 @@
+Resolution,1280,100
+
+//"ImageFile",token,path,,,,,,,
+ImageFile,mask,Skin\keyVision\mask.png,,,,,,,
+ImageFile,light,Skin\keyVision\light.png,,,,,,,
+ImageFile,kps,Skin\Simple\kps.png
+ImageFile,circle,Skin\keyVision\circle.png,,,,,,,
+ImageFile,number,Skin\keyVision\AlarmClock35.png
+
+//Texture",token,imageToken,x,y,w,h,,,
+Texture,mask,mask,0,0,1280,100,,,
+Texture,light,light,0,0,40,100,,,
+Texture,kps,kps,0,0,64,32
+Texture,circle,circle,0,0,64,64
+Texture,number,number,0,0,350,64
+
+// numType: (0:KPS, 1:keyStrokesInCurrentFrame)
+//"Image",token,texToken,x,y,w,h,,
+//"NumImage",token,texToken,x,y,w,h,div_x,div_y,digit,numType
+Image,mask,mask,0,0,1280,100,,,
+Image,kps,kps,0,0,64,32
+Image,light,light,0,0,40,100,,,
+Image,circle,circle,0,0,64,64,,,
+NumImage,number,number,0,0,350,64,10,1,2,0
+
+// eventType: (0: Static, 1:keyPress, 2:keyRelease, 3:KPShigh, 4:KPSlow)
+// blend:  (0:None, 1:Alpha, 2:Add)
+// level: event level higher than the level will be registered
+// customLevel: (1000:Number)
+//"Event",eventType,level,layer,imgtoken,blend,loop,,,,
+//"KeyFrame",time,x,y,w,h,r,g,b,a,
+//"KeyFrame",time,x,y,w,h,r,g,b,a,
+//...
+
+Event,1,0,13,light,1,-1
+KeyFrame,0,60,0,150,100,0,255,255,255
+KeyFrame,800,1280,0,150,100,0,255,255,255
+
+Event,1,3,12,light,1,-1
+KeyFrame,0,0,0,200,100,255,255,255,255
+KeyFrame,800,1200,0,200,100,255,255,255,255
+
+Event,1,5,11,light,1,-1
+KeyFrame,0,-40,0,200,100,255,0,0,255
+KeyFrame,800,1160,0,200,100,255,0,0,255
+
+Event,1,0,101,circle,1,-1
+KeyFrame,0,119,40,64,64,255,255,255,255
+KeyFrame,100,135,56,32,32,255,255,255,0
+
+Event,3,20,102,circle,1,-1
+KeyFrame,0,103,24,96,96,255,0,0,255
+KeyFrame,100,119,40,64,64,255,0,0,0
+
+Event,0,0,101,kps,1,0
+KeyFrame,0,32,64,64,32,0,255,255,255
+
+Event,0,0,100,mask,1,0
+KeyFrame,0,0,0,1280,100,255,255,255,255
+
+Event,0,1000,200,number,1,0
+KeyFrame,0,32,4,35,64,0,255,255,255
