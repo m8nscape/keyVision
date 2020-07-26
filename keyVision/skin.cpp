@@ -3,11 +3,11 @@
 #include <sstream>
 #include <fstream>
 #include <chrono>
-#include <boost/tokenizer.hpp>
+//#include <boost/tokenizer.hpp>
 using namespace std;
 
 auto staticStartTime = std::chrono::system_clock::now();
-typedef boost::tokenizer<boost::escaped_list_separator<char>> tokenizer;
+//typedef boost::tokenizer<boost::escaped_list_separator<char>> tokenizer;
 
 skin& skinInst()
 {
@@ -41,8 +41,8 @@ void skin::readFile(string path)
 }
 
 static unsigned lineN = 0;
-#define PARAM_NOT_MATCH \
-	throw(out_of_range(string("Config file leveleters not match, Line " + lineN)));
+#define THROW_PARAM_NOT_MATCH \
+	throw(out_of_range(string("Config file leveleters not match, Line " + lineN)))
 
 pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 {
@@ -64,8 +64,26 @@ pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 	line.erase(line.length() - 2);
 
 	std::vector<std::string> tokens;
-	auto tokenBase = tokenizer(line, boost::escaped_list_separator<char>());
-	for (auto& t : tokenBase) tokens.push_back(t);
+	//auto tokenBase = tokenizer(line, boost::escaped_list_separator<char>());
+	//for (auto& t : tokenBase) tokens.push_back(t);
+	{
+		size_t lineDelimiterOffset = 0;
+		size_t prevOffset = 0;
+		while (true)
+		{
+			lineDelimiterOffset = line.find(',', prevOffset);
+			if (lineDelimiterOffset == line.npos)
+			{
+				tokens.push_back(line.substr(prevOffset));
+				break;
+			}
+			else
+			{
+				tokens.push_back(line.substr(prevOffset, lineDelimiterOffset - prevOffset));
+				prevOffset = lineDelimiterOffset + 1;
+			}
+		}
+	}
 	while (!tokens.empty() && tokens.back().empty()) tokens.pop_back();
 	if (tokens.empty()) return EMPTYLINE;
 
@@ -73,7 +91,7 @@ pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 	{
 		if (tokens[0] == "Resolution")
 		{
-			if (tokens.size() != 3) PARAM_NOT_MATCH
+			if (tokens.size() != 3) THROW_PARAM_NOT_MATCH;
 			int w = stoi(tokens[1]);
 			int h = stoi(tokens[2]);
 			winw = w;
@@ -82,7 +100,7 @@ pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 		}
 		else if (tokens[0] == "ImageFile")
 		{
-			if (tokens.size() != 3) PARAM_NOT_MATCH
+			if (tokens.size() != 3) THROW_PARAM_NOT_MATCH;
 			string token = tokens[1];
 			string path = tokens[2];
 			vecImage.emplace_back();
@@ -92,7 +110,7 @@ pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 		}
 		else if (tokens[0] == "Texture")
 		{
-			if (tokens.size() != 7) PARAM_NOT_MATCH
+			if (tokens.size() != 7) THROW_PARAM_NOT_MATCH;
 			string token = tokens[1];
 			unsigned imageIdx = imageTokenIdx[tokens[2]];
 			int x = stoi(tokens[3]);
@@ -111,22 +129,22 @@ pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 		//}
 		else if (tokens[0] == "Image")
 		{
-			if (tokens.size() != 7) PARAM_NOT_MATCH
+			if (tokens.size() != 7) THROW_PARAM_NOT_MATCH;
 			string token = tokens[1];
 			string texture = tokens[2];
 			int x = stoi(tokens[3]);
 			int y = stoi(tokens[4]);
 			int w = stoi(tokens[5]);
 			int h = stoi(tokens[6]);
-			vecSprite.push_back(new sf::Sprite(vecTexture[textureTokenIdx[texture]]));
-			sf::Sprite *spr = vecSprite.back();
+			auto spr = std::make_shared<Sprite>(vecTexture[textureTokenIdx[texture]]);
+			vecSprite.push_back(spr);
 			spr->setTextureRect(sf::IntRect(x, y, w, h));
 			drawableTokenIdx.emplace(token, vecSprite.size() - 1);
 			return IMAGE;
 		}
 		else if (tokens[0] == "NumImage")
 		{
-			if (tokens.size() != 11) PARAM_NOT_MATCH
+			if (tokens.size() != 11) THROW_PARAM_NOT_MATCH;
 			string token = tokens[1];
 			string texture = tokens[2];
 			int x = stoi(tokens[3]);
@@ -137,15 +155,34 @@ pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 			int divy = stoi(tokens[8]);
 			int digit = stoi(tokens[9]);
 			int numType = stoi(tokens[10]);
-			vecSprite.push_back(new Number(numType, digit, vecTexture[textureTokenIdx[texture]], divx, divy));
-			Number *spr = static_cast<Number*>(vecSprite.back());
+			auto spr = std::make_shared<Number>(numType, digit, vecTexture[textureTokenIdx[texture]], divx, divy);
+			vecSprite.push_back(spr);
 			spr->setTextureRect(sf::IntRect(x, y, w, h));
 			drawableTokenIdx.emplace(token, vecSprite.size() - 1);
 			return NUM_IMAGE;
 		}
+		else if (tokens[0] == "BarImage")
+		{
+			if (tokens.size() != 11) THROW_PARAM_NOT_MATCH;
+				string token = tokens[1];
+			string texture = tokens[2];
+			int x = stoi(tokens[3]);
+			int y = stoi(tokens[4]);
+			int w = stoi(tokens[5]);
+			int h = stoi(tokens[6]);
+			int dir = stoi(tokens[7]);
+			int min = stoi(tokens[8]);
+			int max = stoi(tokens[9]);
+			int barType = stoi(tokens[10]);
+			auto spr = std::make_shared<Bar>(barType, dir, min, max, vecTexture[textureTokenIdx[texture]]);
+			vecSprite.push_back(spr);
+			spr->setTextureRect(sf::IntRect(x, y, w, h));
+			drawableTokenIdx.emplace(token, vecSprite.size() - 1);
+			return IMAGE;
+		}
 		else if (tokens[0] == "Event")
 		{
-			if (tokens.size() != 7) PARAM_NOT_MATCH
+			if (tokens.size() != 7) THROW_PARAM_NOT_MATCH;
 			int type = prevevent = stoi(tokens[1]);
 			int eventLevel = stoi(tokens[2]);
 			int layer = stoi(tokens[3]);
@@ -168,7 +205,7 @@ pattern skin::parse(string lineRaw, int& prevevent, pattern prev)
 		{
 			if (prev == EVENT || prev == EVENT_ANIM_KEY_FRAME)
 			{
-				if (tokens.size() != 10) PARAM_NOT_MATCH
+				if (tokens.size() != 10) THROW_PARAM_NOT_MATCH;
 				auto& kFrames = events[prevevent].back().keyFrames;
 				int time = stoi(tokens[1]);
 				int x = stoi(tokens[2]);
@@ -297,10 +334,7 @@ void skin::registerEvent(eventType type, int level) const
 			ptr.eventIdx = i;
 			ptr.startTime = rTime;
 			ptr.layer = evt.layer;
-			if (evt.level == PAR_Number)
-				ptr.spr = std::make_shared<Number>(*(Number*)vecSprite[evt.drawable]);
-			else
-				ptr.spr = std::make_shared<sf::Sprite>(*vecSprite[evt.drawable]);
+			ptr.spr = vecSprite[evt.drawable];
 		}
 	}
 }
@@ -336,6 +370,7 @@ void skin::draw(sf::RenderTarget &target, sf::RenderStates states) const
 		default:
 			states.blendMode = sf::BlendAlpha; break;
 		}
+		obj.spr->update();
 		target.draw(*obj.spr, states);
 	}
 }

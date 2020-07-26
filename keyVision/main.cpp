@@ -2,7 +2,10 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+
+#define byte win_byte_override
 #include <SFML/Window.hpp>
+
 #include "config.h"
 #include "key.h"
 #include "skin.h"
@@ -29,6 +32,7 @@ void subthread(const sf::RenderWindow& window)
 		int kps = getKPS();
 		num().set(CurrentFrameKeys, k);
 		num().set(KPS, getKPS());
+		num().set(KP01S, getKP01S());
 		{
 			std::lock_guard<std::mutex> lock(eventMutex);
 			if (k > 0)

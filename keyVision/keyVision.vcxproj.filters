@@ -35,10 +35,10 @@
     <ClInclude Include="skin.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="etc.h">
+    <ClInclude Include="num.h">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="num.h">
+    <ClInclude Include="obj.h">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

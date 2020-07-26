@@ -4,6 +4,7 @@ enum numbers
 {
 	KPS,
 	CurrentFrameKeys,
+	KP01S,
 
 	NumCount
 };

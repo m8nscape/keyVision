@@ -1,14 +1,14 @@
 #pragma once
 
-#include "etc.h"
+#include "obj.h"
 #include <utility>
 #include <memory>
 #include <vector>
 #include <string>
 #include <unordered_map>
 #include <list>
-using namespace std;
 #include <SFML/Graphics.hpp>
+using namespace std;
 
 enum pattern
 {
@@ -52,7 +52,7 @@ struct eventStat
 	size_t eventIdx;
 	long long startTime;
 	unsigned layer;
-	std::shared_ptr<sf::Sprite> spr;
+	std::shared_ptr<Sprite> spr;
 };
 
 class skin : public sf::Drawable
@@ -71,7 +71,7 @@ protected:
 	unordered_map<string, size_t> textureTokenIdx;
 	unordered_map<string, size_t> drawableTokenIdx;
 	vector<sf::Texture> vecTexture;
-	vector<sf::Sprite*> vecSprite;
+	vector<std::shared_ptr<Sprite>> vecSprite;
 
 	vector<eventTy> events[eventTypeCount];
 	mutable vector<bool> eventRunning[eventTypeCount]; // for kps; vector<bool> is ok

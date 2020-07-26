@@ -14,9 +14,15 @@ Texture,kps,kps,0,0,64,32
 Texture,circle,circle,0,0,64,64
 Texture,number,number,0,0,350,64
 
-// numType: (0:KPS, 1:keyStrokesInCurrentFrame)
+
 //"Image",token,texToken,x,y,w,h,,
 //"NumImage",token,texToken,x,y,w,h,div_x,div_y,digit,numType
+//  numType: (0:KPS, 1:keyStrokesInCurrentFrame)
+//"BarImage",token,texToken,x,y,w,h,dir(2468),min,max,barType
+//  dir: 2(top from bottom), 4(left to right), 6, 8(use your logic)
+//  min: start display when value reached min
+//  max: fully displayed when value exceeds max
+//  barType: (0:KPS, 1:K/0.1s)
 Image,mask,mask,0,0,1280,100,,,
 Image,kps,kps,0,0,64,32
 Image,light,light,0,0,40,100,,,
@@ -26,7 +32,13 @@ NumImage,number,number,0,0,350,64,10,1,2,0
 // eventType: (0: Static, 1:keyPress, 2:keyRelease, 3:KPShigh, 4:KPSlow)
 // blend:  (0:None, 1:Alpha, 2:Add)
 // level: event level higher than the level will be registered
-// customLevel: (1000:Number)
+//  Static: static image
+//     display as NumImage if level=1000
+//     display as BarImage if level=1001
+//  keyPress: how many keystrokes captured in current frame
+//  keyRelease: same
+//  KPShigh: trigger when peak kps updated
+//  KPSlow: not implemented
 //"Event",eventType,level,layer,imgtoken,blend,loop,,,,
 //"KeyFrame",time,x,y,w,h,r,g,b,a,
 //"KeyFrame",time,x,y,w,h,r,g,b,a,
