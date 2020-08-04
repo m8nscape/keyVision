@@ -153,12 +153,15 @@ public:
 		float val = 0.0;
 		if (min != max)
 		{
+			int n = min;
 			switch (barType)
 			{
-			case bar_KPS: val = float(num().get(KPS) - min) / (max - min); break;
-			case bar_KP01S: val = float(num().get(KP01S)) / (max - min); break;
+			case bar_KPS: n = num().get(KPS); break;
+			case bar_KP01S: n = num().get(KP01S); break;
 			default: break;
 			}
+			if (n < min) n = min;
+			val = float((n - min) / (max - min));
 		}
 		switch (dir)
 		{
